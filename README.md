@@ -54,6 +54,7 @@ This is a Discord bot built using Node.js and Discord.js. It includes various co
 This project is licensed under the MIT License - see the [LICENSE](https://en.wikipedia.org/wiki/MIT_License) file for details.
 
 ## Acknowledgments
+  - [Malaysia Prayer Times](https://mpt.i906.my/) - API used to fetch prayer times data from JAKIM website.
   - [Discord.js](https://discord.js.org/) - The library used for interacting with the Discord API.
   - [Node.js](https://nodejs.org/en) - JavaScript runtime used for running the bot.
   - [Dotenv](https://www.dotenv.org/) - Loads environment variables from a .env file.
