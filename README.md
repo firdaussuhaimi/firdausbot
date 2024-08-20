@@ -1,4 +1,4 @@
-# Discord Bot
+# Discord Bot by Firdaus
 
 This is a Discord bot built using Node.js and Discord.js. It includes various commands and scheduled tasks to enhance user experience in a Discord server.
 
