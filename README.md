@@ -1,6 +1,11 @@
 # Discord Bot by Firdaus
 
-This is a Discord bot built using Node.js and Discord.js. It includes various commands and scheduled tasks to enhance user experience in a Discord server.
+This is a Discord bot built using Node.js and Discord.js. It includes various commands and scheduled tasks to enhance user experience in a Discord server. Its main purpose is to serve the user with the help of basic needs such as: 
+
+  - "What do I eat for today?"
+  - "When can I go out for lunch?
+  - "When is the prayer time for today?"
+  - "What is the prayer time for today at X area?
 
 ## Features
 
@@ -12,7 +17,6 @@ This is a Discord bot built using Node.js and Discord.js. It includes various co
   - `/makanmana` - Suggests a random place to eat from a list.
   - `/waktusolat` - Shows prayer times based on the location.
   - `/lokasiwaktusolat` - Lists all available location codes for prayer times.
-  - `/quest` - Reminds everyone to check their daily quest from OwO bot.
 
 ## Installation
 
