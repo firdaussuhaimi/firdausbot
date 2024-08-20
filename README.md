@@ -1,6 +1,6 @@
 # Discord Bot by Firdaus
 
-This is a Discord bot built using Node.js and Discord.js. It includes various commands and scheduled tasks to enhance user experience in a Discord server. Its main purpose is to serve the user with the help of basic needs such as: 
+This is a Discord bot built using Node.js and Discord.js. It includes various commands and scheduled tasks to enhance user experience. Its main purpose is to serve the user with the help of basic needs such as: 
 
   - "What do I eat for today?"
   - "When can I go out for lunch?
