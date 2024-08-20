@@ -37,7 +37,6 @@ This is a Discord bot built using Node.js and Discord.js. It includes various co
     ```bash
     node index.js
 
-
 ## Usage
   - Starting the Bot: Run the bot using ```node index.js```
   - Commands: Use the / prefix followed by the command name in a Discord channel where the bot has access.
