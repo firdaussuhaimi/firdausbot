@@ -20,12 +20,10 @@ This is a Discord bot built using Node.js and Discord.js. It includes various co
    ```bash
    git clone https://github.com/yourusername/your-repository.git
    cd your-repository
-    ```bash
 
 2. **Install dependencies**:
     ```bash
     npm install
-    ```bash
 
 3. **Create a .env file in the root directory and add your environment variables:**:
     ```bash
@@ -34,19 +32,17 @@ This is a Discord bot built using Node.js and Discord.js. It includes various co
     GUILD_ID=your-guild-id
     CHANNEL_ID=your-channel-id
     GAME_CHANNEL_ID=your-channel-id
-    ```bash
 
 4. **Run the bot**:
     ```bash
     node index.js
-    ```bash
 
 
 ## Usage
   - Starting the Bot: Run the bot using ```node index.js```
   - Commands: Use the / prefix followed by the command name in a Discord channel where the bot has access.
-  - Example: To check the time for makan, type \*\*/gerakmakan\*\*.
-  - To see prayer times, type \*\*/waktusolat\*\* and provide a location.
+  - Example: To check the time for makan, type **/gerakmakan**.
+  - To see prayer times, type **/waktusolat** and provide a location.
 
 ## Contributing
   1. Fork the repository.
@@ -59,6 +55,6 @@ This is a Discord bot built using Node.js and Discord.js. It includes various co
 This project is licensed under the MIT License - see the [LICENSE](https://en.wikipedia.org/wiki/MIT_License) file for details.
 
 ## Acknowledgments
-[Discord.js](https://discord.js.org/) - The library used for interacting with the Discord API.
-[Node.js](https://nodejs.org/en) - JavaScript runtime used for running the bot.
-[Dotenv](https://www.dotenv.org/) - Loads environment variables from a .env file.
+  - [Discord.js](https://discord.js.org/) - The library used for interacting with the Discord API.
+  - [Node.js](https://nodejs.org/en) - JavaScript runtime used for running the bot.
+  - [Dotenv](https://www.dotenv.org/) - Loads environment variables from a .env file.
