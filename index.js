@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 const { Client, GatewayIntentBits, REST, Routes, EmbedBuilder } = require('discord.js');
-const axios = require('axios'); // Install axios with npm install axios
-const cron = require('node-cron'); // Install node-cron with npm install node-cron
+const axios = require('axios'); 
+const cron = require('node-cron'); 
 const token = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
@@ -56,7 +56,7 @@ const commands = [
         description: 'Shows prayer times based on the location!',
         options: [
             {
-                type: 3, // STRING
+                type: 3, // String
                 name: 'location',
                 description: 'Enter your location (e.g., city name)',
                 required: true,
@@ -89,7 +89,6 @@ const rest = new REST({ version: '10' }).setToken(token);
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
-    // Schedule a daily message at 12 PM
     cron.schedule('0 12 * * *', () => {
         const channel = client.channels.cache.get(channelId);
         if (channel) {
@@ -101,7 +100,6 @@ client.on('ready', () => {
         timezone: "Asia/Kuala_Lumpur"
     });
 
-    // Schedule a daily message at 5 PM
     cron.schedule('0 17 * * *', () => {
         const channel = client.channels.cache.get(channelId);
         if (channel) {
@@ -113,7 +111,6 @@ client.on('ready', () => {
         timezone: "Asia/Kuala_Lumpur"
     });
 
-    // Schedule a daily OwO quest reminder at 3 PM
     cron.schedule('0 15 * * *', () => {
         const channel = client.channels.cache.get(gameChannelId);
         if (channel) {
@@ -131,7 +128,6 @@ client.on('interactionCreate', async interaction => {
 
     const { commandName } = interaction;
 
-    // Send an initial spinning message
     const spinningMessage = await interaction.reply({
         content: '🌀 Spinning...',
         fetchReply: true
@@ -142,7 +138,7 @@ client.on('interactionCreate', async interaction => {
             await spinningMessage.edit({
                 content: 'pong!',
             });
-        }, 2000); // 2-second delay
+        }, 2000); 
     } else if (commandName === 'gerakmakan') {
         setTimeout(async () => {
             const hour = 12;
@@ -151,7 +147,7 @@ client.on('interactionCreate', async interaction => {
             await spinningMessage.edit({
                 content: `You should go makan at ${formattedTime}. Happy makan!`,
             });
-        }, 2000); // 2-second delay
+        }, 2000); 
     } else if (commandName === 'geraksolat') {
         setTimeout(async () => {
             const hour = 12;
@@ -162,7 +158,7 @@ client.on('interactionCreate', async interaction => {
             await spinningMessage.edit({
                 content: `Gerak solat Jumaat is set at ${formattedTime}. Please bring your items and selamat menunaikan solat!`,
             });
-        }, 2000); // 2-second delay
+        }, 2000); 
     } else if (commandName === 'makanmana') {
         setTimeout(async () => {
             const places = [
@@ -178,9 +174,9 @@ client.on('interactionCreate', async interaction => {
             await spinningMessage.edit({
                 content: `${randomPlace} has been selected! Pergi makan kat sana!`,
             });
-        }, 2000); // 2-second delay
+        }, 2000); 
     } else if (commandName === 'waktusolat') {
-        const location = interaction.options.getString('location'); // This would be user input
+        const location = interaction.options.getString('location'); // User input
         const code = locationCodes[location];
 
         if (!code) {
@@ -192,8 +188,7 @@ client.on('interactionCreate', async interaction => {
             const response = await axios.get(`https://mpt.i906.my/api/prayer/${code}`);
             const data = response.data.data;
             
-            // Assuming data.times is a 2D array with prayer times for each day
-            const today = new Date().getDate(); // Get the current day of the month (1-based index)
+            const today = new Date().getDate();
             const timesForToday = data.times[today - 1];
 
             if (!timesForToday) {
