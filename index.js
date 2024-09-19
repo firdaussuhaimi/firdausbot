@@ -8,8 +8,16 @@ const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 const channelId = process.env.CHANNEL_ID;
 const gameChannelId = process.env.GAME_CHANNEL_ID;
+const afkUsers = new Map();
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildPresences,  // Required to detect presence updates
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 
 const locationCodes = {
     'Gombak': 'sgr-0',
@@ -122,6 +130,33 @@ client.on('ready', () => {
         timezone: "Asia/Kuala_Lumpur"
     });
 });
+
+
+client.on('presenceUpdate', (oldPresence, newPresence) => {
+    if (!newPresence || !newPresence.user) return;
+
+    const member = newPresence.member;
+    const userId = member.id;
+    const status = newPresence.status;
+
+    const afkChannel = client.channels.cache.get(channelId);
+
+    if (status === 'idle') {
+        if (!afkUsers.has(userId)) {
+            afkUsers.set(userId, Date.now());
+            afkChannel.send(`${member.user.tag} is now AFK.`);
+        }
+    }
+
+    if (status === 'online' || status === 'dnd') {
+        if (afkUsers.has(userId)) {
+            const afkTime = Date.now() - afkUsers.get(userId);
+            afkUsers.delete(userId);
+            afkChannel.send(`${member.user.tag} is back after being AFK for ${Math.round(afkTime / 60000)} minutes.`);
+        }
+    }
+});
+
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
