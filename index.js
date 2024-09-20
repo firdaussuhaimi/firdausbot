@@ -78,6 +78,25 @@ const commands = [
     {
         name: 'osom',
         description: 'Play rock-paper-scissors with another user!',
+        options: [
+            {
+                type: 6, // User
+                name: 'opponent',
+                description: 'Select the user you want to play against',
+                required: true,
+            },
+            {
+                type: 3, // String
+                name: 'move',
+                description: 'Your move: rock, paper, or scissors',
+                required: true,
+                choices: [
+                    { name: 'rock', value: 'rock' },
+                    { name: 'paper', value: 'paper' },
+                    { name: 'scissors', value: 'scissors' },
+                ],
+            },
+        ],
     }
 ];
 
@@ -277,78 +296,53 @@ client.on('interactionCreate', async interaction => {
             await interaction.editReply({ content: '', embeds: [embed] });
         }  else if (commandName === 'osom') {
             const challenger = interaction.user;
+            const opponent = interaction.options.getUser('opponent');
+            const challengerMove = interaction.options.getString('move');
+    
+            // Inform both players about the challenge
             const embed = new EmbedBuilder()
                 .setTitle('Rock-Paper-Scissors Challenge')
-                .setDescription(`${challenger} has challenged someone to a game of Rock-Paper-Scissors!`)
+                .setDescription(`${challenger} has challenged ${opponent} to a game of Rock-Paper-Scissors! 🪨📃✂️`)
                 .setColor('#00FF00')
-                .setFooter({ text: 'Use /accept or /decline to respond!' });
+                .setFooter({ text: 'Both players need to submit their moves!' });
     
-                await interaction.editReply({ embeds: [embed] }); 
-                const collector = interaction.channel.createMessageCollector({
-                filter: response => response.content.startsWith('/accept') || response.content.startsWith('/decline'),
-                time: 60000,
+            await interaction.editReply({ embeds: [embed] });
+    
+            // Ask opponent to submit their move ephemerally
+            await interaction.followUp({
+                content: `⏳ ${opponent}, please submit your move (rock, paper, or scissors). ⏳`,
+                ephemeral: false
             });
     
-            collector.on('collect', async response => {
-                if (response.content.startsWith('/accept')) {
-                    const opponent = response.author;
-                    await interaction.followUp(`${opponent} has accepted the challenge! Both players, please type "rock", "paper", or "scissors" to play.`);
-            
-                    let challengerMove;
-                    let opponentMove;
-            
-                    // Create a collector for both players' moves
-                    const moveCollector = interaction.channel.createMessageCollector({
-                        filter: res => (res.author.id === challenger.id || res.author.id === opponent.id) && 
-                                       ['rock', 'paper', 'scissors'].includes(res.content.toLowerCase()), // Listen for valid moves
-                        time: 30000 // Time limit for collecting moves
-                    });
-            
-                    moveCollector.on('collect', moveResponse => {
-                        const move = moveResponse.content.toLowerCase(); // Convert move to lowercase
-            
-                        if (moveResponse.author.id === challenger.id) {
-                            challengerMove = move;
-                            moveResponse.reply(`You chose ${move}.`);
-                        } else if (moveResponse.author.id === opponent.id) {
-                            opponentMove = move;
-                            moveResponse.reply(`You chose ${move}.`);
-                        }
-            
-                        // If both players have made their move, stop the collector and announce the result
-                        if (challengerMove && opponentMove) {
-                            moveCollector.stop(); // Stop the collector
-            
-                            const winner = determineWinner(challengerMove, opponentMove);
-            
-                            let resultMessage;
-                            if (winner === 'draw') {
-                                resultMessage = `It's a draw! Both players chose ${challengerMove}.`;
-                            } else if (winner === challengerMove) {
-                                resultMessage = `${challenger.tag} wins with ${challengerMove} against ${opponentMove}!`;
-                            } else {
-                                resultMessage = `${opponent.tag} wins with ${opponentMove} against ${challengerMove}!`;
-                            }
-            
-                            interaction.followUp(resultMessage);
-                        }
-                    });
-            
-                    moveCollector.on('end', collected => {
-                        if (!challengerMove || !opponentMove) {
-                            interaction.followUp('Time ran out! One or both players did not make a move.');
-                        }
-                    });
-            
-                } else if (response.content.startsWith('/decline')) {
-                    interaction.followUp('The challenge has been declined.');
-                    collector.stop();
+            const filter = message => {
+                // Ensure the message is from the opponent and is a valid move
+                return message.author.id === opponent.id && ['rock', 'paper', 'scissors'].includes(message.content.toLowerCase());
+            };
+    
+            const moveCollector = interaction.channel.createMessageCollector({ filter, max: 1, time: 30000 });
+    
+            moveCollector.on('collect', async message => {
+                const opponentMove = message.content.toLowerCase();
+    
+                // Determine the winner
+                const winner = determineWinner(challengerMove, opponentMove);
+    
+                let resultMessage;
+                if (winner === 'draw') {
+                    resultMessage = `👏 It's a draw! Both players chose ${challengerMove}. 👏`;
+                } else if (winner === challengerMove) {
+                    resultMessage = `${challenger} wins with ${challengerMove} against ${opponentMove}! 🎉`;
+                } else {
+                    resultMessage = `${opponent} wins with ${opponentMove} against ${challengerMove}! 🎉`;
                 }
+    
+                // Announce the result publicly
+                await interaction.followUp({ content: resultMessage });
             });
     
-            collector.on('end', collected => {
+            moveCollector.on('end', async collected => {
                 if (!collected.size) {
-                    interaction.followUp('No one accepted the challenge.');
+                    await interaction.followUp({ content: '⏰ Time ran out! The opponent did not submit a move.' });
                 }
             });
         }
@@ -360,9 +354,9 @@ client.on('interactionCreate', async interaction => {
 
 function determineWinner(move1, move2) {
     const moves = {
-        '/rock': 0,
-        '/paper': 1,
-        '/scissors': 2
+        'rock': 0,
+        'paper': 1,
+        'scissors': 2
     };
 
     const result = (3 + moves[move1] - moves[move2]) % 3;
