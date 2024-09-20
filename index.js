@@ -74,6 +74,10 @@ const commands = [
     {
         name: 'lokasiwaktusolat',
         description: 'Lists all available location codes for prayer times!',
+    },
+    {
+        name: 'osom',
+        description: 'Play rock-paper-scissors with another user!',
     }
 ];
 
@@ -163,116 +167,207 @@ client.on('interactionCreate', async interaction => {
 
     const { commandName } = interaction;
 
-    const spinningMessage = await interaction.reply({
-        content: '🌀 Spinning...',
-        fetchReply: true
-    });
+    try {
+        await interaction.deferReply();
 
-    if (commandName === 'ping') {
-        setTimeout(async () => {
-            await spinningMessage.edit({
-                content: 'pong!',
-            });
-        }, 2000); 
-    } else if (commandName === 'gerakmakan') {
-        setTimeout(async () => {
-            const hour = 12;
-            const minute = Math.floor(Math.random() * 60); // Random minute between 0 and 59
-            const formattedTime = `${hour}:${minute < 10 ? '0' : ''}${minute} PM`;
-            await spinningMessage.edit({
-                content: `You should go makan at ${formattedTime}. Happy makan!`,
-            });
-        }, 2000); 
-    } else if (commandName === 'geraksolat') {
-        setTimeout(async () => {
-            const hour = 12;
-            const minStart = 30;
-            const minEnd = 60;
-            const minute = Math.floor(Math.random() * (minEnd - minStart) + minStart); // Random minute between 30 and 59
-            const formattedTime = `${hour}:${minute < 10 ? '0' : ''}${minute} PM`;
-            await spinningMessage.edit({
-                content: `Gerak solat Jumaat is set at ${formattedTime}. Please bring your items and selamat menunaikan solat!`,
-            });
-        }, 2000); 
-    } else if (commandName === 'makanmana') {
-        setTimeout(async () => {
-            const places = [
-                'Mamak Bawah',
-                'Mamak Nasi Ayam',
-                'Bunian',
-                'Mek Kelate',
-                'Jayagrocer',
-                'Maggi',
-                'Kat Masjid',
-            ];
-            const randomPlace = places[Math.floor(Math.random() * places.length)];
-            await spinningMessage.edit({
-                content: `${randomPlace} has been selected! Pergi makan kat sana!`,
-            });
-        }, 2000); 
-    } else if (commandName === 'waktusolat') {
-        const location = interaction.options.getString('location'); // User input
-        const code = locationCodes[location];
-
-        if (!code) {
-            await spinningMessage.edit({ content: 'Invalid location code. Please select a valid location.' });
-            return;
-        }
-
-        try {
-            const response = await axios.get(`https://mpt.i906.my/api/prayer/${code}`);
-            const data = response.data.data;
-            
-            const today = new Date().getDate();
-            const timesForToday = data.times[today - 1];
-
-            if (!timesForToday) {
-                await spinningMessage.edit({ content: 'No prayer times available for today.' });
+        if (commandName === 'ping') {
+            setTimeout(async () => {
+                await interaction.editReply({ 
+                    content: 'pong!' });
+                }, 2000); 
+        } else if (commandName === 'gerakmakan') {
+            setTimeout(async () => {
+                const hour = 12;
+                const minute = Math.floor(Math.random() * 60); // Random minute between 0 and 59
+                const formattedTime = `${hour}:${minute < 10 ? '0' : ''}${minute} PM`;
+                await interaction.editReply({ 
+                    content: `You should go makan at ${formattedTime}. Happy makan!` });
+                }, 2000);
+        } else if (commandName === 'geraksolat') {
+            setTimeout(async () => {
+                const hour = 12;
+                const minStart = 30;
+                const minEnd = 60;
+                const minute = Math.floor(Math.random() * (minEnd - minStart) + minStart); // Random minute between 30 and 59
+                const formattedTime = `${hour}:${minute < 10 ? '0' : ''}${minute} PM`;
+                await interaction.editReply({
+                    content: `Gerak solat Jumaat is set at ${formattedTime}. Please bring your items and selamat menunaikan solat!`,
+                });
+            }, 2000); 
+        } else if (commandName === 'makanmana') {
+            setTimeout(async () => {
+                const places = [
+                    'Mamak Bawah',
+                    'Mamak Nasi Ayam',
+                    'Bunian',
+                    'Mek Kelate',
+                    'Jayagrocer',
+                    'Maggi',
+                    'Kat Masjid',
+                ];
+                const randomPlace = places[Math.floor(Math.random() * places.length)];
+                await interaction.editReply({
+                    content: `${randomPlace} has been selected! Pergi makan kat sana!`,
+                });
+            }, 2000); 
+        } else if (commandName === 'waktusolat') {
+            const location = interaction.options.getString('location'); // User input
+            const code = locationCodes[location];
+    
+            if (!code) {
+                await interaction.editReply({ 
+                    content: 'Invalid location code. Please select a valid location.' });
                 return;
             }
-
-            const prayerTimes = {
-                Subuh: new Date(timesForToday[0] * 1000).toLocaleTimeString(),
-                Syuruk: new Date(timesForToday[1] * 1000).toLocaleTimeString(),
-                Zohor: new Date(timesForToday[2] * 1000).toLocaleTimeString(),
-                Asar: new Date(timesForToday[3] * 1000).toLocaleTimeString(),
-                Maghrib: new Date(timesForToday[4] * 1000).toLocaleTimeString(),
-                Isya: new Date(timesForToday[5] * 1000).toLocaleTimeString()
-            };
-
+    
+            try {
+                const response = await axios.get(`https://mpt.i906.my/api/prayer/${code}`);
+                const data = response.data.data;
+                
+                const today = new Date().getDate();
+                const timesForToday = data.times[today - 1];
+    
+                if (!timesForToday) {
+                    await interaction.editReply({ 
+                        content: 'No prayer times available for today.' });
+                    return;
+                }
+    
+                const prayerTimes = {
+                    Subuh: new Date(timesForToday[0] * 1000).toLocaleTimeString(),
+                    Syuruk: new Date(timesForToday[1] * 1000).toLocaleTimeString(),
+                    Zohor: new Date(timesForToday[2] * 1000).toLocaleTimeString(),
+                    Asar: new Date(timesForToday[3] * 1000).toLocaleTimeString(),
+                    Maghrib: new Date(timesForToday[4] * 1000).toLocaleTimeString(),
+                    Isya: new Date(timesForToday[5] * 1000).toLocaleTimeString()
+                };
+    
+                const embed = new EmbedBuilder()
+                    .setTitle('Prayer Times')
+                    .setDescription(`Prayer times for ${data.place} on ${new Date().toLocaleDateString()}`)
+                    .addFields(
+                        { name: 'Subuh', value: prayerTimes.Subuh, inline: true },
+                        { name: 'Syuruk', value: prayerTimes.Syuruk, inline: true },
+                        { name: 'Zohor', value: prayerTimes.Zohor, inline: true },
+                        { name: 'Asar', value: prayerTimes.Asar, inline: true },
+                        { name: 'Maghrib', value: prayerTimes.Maghrib, inline: true },
+                        { name: 'Isya', value: prayerTimes.Isya, inline: true }
+                    )
+                    .setColor('#0099ff');
+    
+                await interaction.editReply({ 
+                    content: '', embeds: [embed] });
+            } catch (error) {
+                console.error(error);
+                await interaction.editReply({ content: 'Failed to fetch prayer times. Please try again later.' });
+            }
+        } else if (commandName === 'lokasiwaktusolat') {
+            const locationsList = Object.keys(locationCodes)
+                .map(location => location)
+                .join('\n');
+        
             const embed = new EmbedBuilder()
-                .setTitle('Prayer Times')
-                .setDescription(`Prayer times for ${data.place} on ${new Date().toLocaleDateString()}`)
-                .addFields(
-                    { name: 'Subuh', value: prayerTimes.Subuh, inline: true },
-                    { name: 'Syuruk', value: prayerTimes.Syuruk, inline: true },
-                    { name: 'Zohor', value: prayerTimes.Zohor, inline: true },
-                    { name: 'Asar', value: prayerTimes.Asar, inline: true },
-                    { name: 'Maghrib', value: prayerTimes.Maghrib, inline: true },
-                    { name: 'Isya', value: prayerTimes.Isya, inline: true }
-                )
+                .setTitle('Prayer Time Locations')
+                .setDescription('Here is a list of available prayer time locations:')
+                .addFields([
+                    { name: 'Locations', value: locationsList }
+                ])
                 .setColor('#0099ff');
-
-            await spinningMessage.edit({ content: '', embeds: [embed] });
-        } catch (error) {
-            console.error(error);
-            await spinningMessage.edit({ content: 'Failed to fetch prayer times. Please try again later.' });
+        
+            await interaction.editReply({ content: '', embeds: [embed] });
+        }  else if (commandName === 'osom') {
+            const challenger = interaction.user;
+            const embed = new EmbedBuilder()
+                .setTitle('Rock-Paper-Scissors Challenge')
+                .setDescription(`${challenger} has challenged someone to a game of Rock-Paper-Scissors!`)
+                .setColor('#00FF00')
+                .setFooter({ text: 'Use /accept or /decline to respond!' });
+    
+                await interaction.editReply({ embeds: [embed] }); 
+                const collector = interaction.channel.createMessageCollector({
+                filter: response => response.content.startsWith('/accept') || response.content.startsWith('/decline'),
+                time: 60000,
+            });
+    
+            collector.on('collect', async response => {
+                if (response.content.startsWith('/accept')) {
+                    const opponent = response.author;
+                    await interaction.followUp(`${opponent} has accepted the challenge! Both players, please type "rock", "paper", or "scissors" to play.`);
+            
+                    let challengerMove;
+                    let opponentMove;
+            
+                    // Create a collector for both players' moves
+                    const moveCollector = interaction.channel.createMessageCollector({
+                        filter: res => (res.author.id === challenger.id || res.author.id === opponent.id) && 
+                                       ['rock', 'paper', 'scissors'].includes(res.content.toLowerCase()), // Listen for valid moves
+                        time: 30000 // Time limit for collecting moves
+                    });
+            
+                    moveCollector.on('collect', moveResponse => {
+                        const move = moveResponse.content.toLowerCase(); // Convert move to lowercase
+            
+                        if (moveResponse.author.id === challenger.id) {
+                            challengerMove = move;
+                            moveResponse.reply(`You chose ${move}.`);
+                        } else if (moveResponse.author.id === opponent.id) {
+                            opponentMove = move;
+                            moveResponse.reply(`You chose ${move}.`);
+                        }
+            
+                        // If both players have made their move, stop the collector and announce the result
+                        if (challengerMove && opponentMove) {
+                            moveCollector.stop(); // Stop the collector
+            
+                            const winner = determineWinner(challengerMove, opponentMove);
+            
+                            let resultMessage;
+                            if (winner === 'draw') {
+                                resultMessage = `It's a draw! Both players chose ${challengerMove}.`;
+                            } else if (winner === challengerMove) {
+                                resultMessage = `${challenger.tag} wins with ${challengerMove} against ${opponentMove}!`;
+                            } else {
+                                resultMessage = `${opponent.tag} wins with ${opponentMove} against ${challengerMove}!`;
+                            }
+            
+                            interaction.followUp(resultMessage);
+                        }
+                    });
+            
+                    moveCollector.on('end', collected => {
+                        if (!challengerMove || !opponentMove) {
+                            interaction.followUp('Time ran out! One or both players did not make a move.');
+                        }
+                    });
+            
+                } else if (response.content.startsWith('/decline')) {
+                    interaction.followUp('The challenge has been declined.');
+                    collector.stop();
+                }
+            });
+    
+            collector.on('end', collected => {
+                if (!collected.size) {
+                    interaction.followUp('No one accepted the challenge.');
+                }
+            });
         }
-    } else if (commandName === 'lokasiwaktusolat') {
-        const locationsList = Object.keys(locationCodes)
-            .map(location => location)
-            .join('\n');
-    
-        const embed = new EmbedBuilder()
-            .setTitle('Prayer Time Locations')
-            .setDescription('Here is a list of available prayer time locations:')
-            .addFields([
-                { name: 'Locations', value: locationsList }
-            ])
-            .setColor('#0099ff');
-    
-        await spinningMessage.edit({ content: '', embeds: [embed] });
+    } catch (error) {
+        console.error(error);
     }
+
 });
+
+function determineWinner(move1, move2) {
+    const moves = {
+        '/rock': 0,
+        '/paper': 1,
+        '/scissors': 2
+    };
+
+    const result = (3 + moves[move1] - moves[move2]) % 3;
+    if (result === 0) return 'draw';
+    return result === 1 ? move1 : move2;
+}
 
 client.login(token);
