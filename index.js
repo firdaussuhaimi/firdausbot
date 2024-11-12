@@ -142,7 +142,7 @@ client.on('ready', () => {
         timezone: "Asia/Kuala_Lumpur"
     });
 
-    cron.schedule('0 15 * * *', () => {
+    cron.schedule('0 16 * * *', () => {
         const channel = client.channels.cache.get(gameChannelId);
         if (channel) {
             channel.send('@everyone Be sure to check your daily & quest from OwO! Type **owo quest** to check!');
