@@ -145,7 +145,7 @@ client.on('ready', () => {
     cron.schedule('0 16 * * *', () => {
         const channel = client.channels.cache.get(gameChannelId);
         if (channel) {
-            channel.send('@everyone Be sure to check your daily & quest from OwO! Type **owo quest** to check!');
+            channel.send('@everyone Be sure to check your daily & quest from OwO! Type **owo daily** to check!');
         } else {
             console.error('Channel not found.');
         }
