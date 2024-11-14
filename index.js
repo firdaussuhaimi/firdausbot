@@ -223,6 +223,7 @@ client.on('interactionCreate', async interaction => {
                     'Jayagrocer',
                     'Maggi',
                     'Kat Masjid',
+                    'Shower'
                 ];
                 const randomPlace = places[Math.floor(Math.random() * places.length)];
                 await interaction.editReply({
